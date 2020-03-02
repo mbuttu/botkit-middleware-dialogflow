@@ -12,7 +12,7 @@ module.exports = function(config) {
   const app = (middleware.api = api(config));
 
   middleware.receive = async function(bot, message, next) {
-    if (!message.text || message.is_echo || message.type === 'self_message') {
+    if ((!message.text || message.is_echo || message.type === 'self_message') && !message.type) {
       next();
       return;
     }
@@ -36,7 +36,7 @@ module.exports = function(config) {
     );
 
     try {
-      const response = await app.query(sessionId, lang, message.text);
+      const response = await app.query(sessionId, lang, message.text, message.type);
       Object.assign(message, response);
 
       debug('dialogflow annotated message: %O', message);

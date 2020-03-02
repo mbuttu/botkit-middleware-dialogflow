@@ -77,15 +77,24 @@ class DialogFlowAPI_V2 {
     this.app = new dialogflow.SessionsClient(opts);
   }
 
-  query(sessionId, languageCode, text) {
+  query(sessionId, languageCode, text, event) {
+    const textQuery = {
+        text: {
+            text: text,
+            languageCode: languageCode,
+        }
+    };
+
+    const eventQuery = {
+        event: {
+            name: event,
+            languageCode
+        }
+    }
+
     const request = {
       session: this.app.sessionPath(this.projectId, sessionId),
-      queryInput: {
-        text: {
-          text: text,
-          languageCode: languageCode,
-        },
-      },
+      queryInput: {...(text ? textQuery : eventQuery)}
     };
 
     return new Promise((resolve, reject) => {
